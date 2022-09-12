@@ -1,5 +1,6 @@
 const localStorageSimulator = require('../mocks/localStorageSimulator');
 const saveCartItems = require('../helpers/saveCartItems');
+const { expect } = require('@jest/globals');
 
 localStorageSimulator('setItem');
 

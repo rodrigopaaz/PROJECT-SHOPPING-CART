@@ -3,7 +3,6 @@
 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
-
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -41,7 +40,6 @@ const createCustomElement = (element, className, innerText) => {
 const createProductItemElement = ({ id, title, thumbnail }) => {
   const section = document.createElement('section');
   section.className = 'item';
-
   section.appendChild(createCustomElement('span', 'item_id', id));
   section.appendChild(createCustomElement('span', 'item__title', title));
   section.appendChild(createProductImageElement(thumbnail));
@@ -73,4 +71,16 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
-window.onload = () => { };
+const newClass = (parametro) => {
+  const classItems = document.getElementsByClassName('items')[0];
+  return classItems.appendChild(createProductItemElement(parametro));
+};
+
+const createProduct = async () => {
+  const { results } = await fetchProducts('computador');
+    results.forEach((element) => {
+      newClass(element);
+    });
+};
+
+window.onload = () => { createProduct(); };
