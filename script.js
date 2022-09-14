@@ -23,6 +23,16 @@ const createProductImageElement = (imageSource) => {
   return img;
 };
 
+const button = document.getElementsByClassName('empty-cart')[0];
+button.addEventListener('click', () => {
+  const ol = document.getElementsByClassName('cart__items')[0]; 
+  ol.innerHTML = '';
+  localStorage.clear();
+  const valor = document.getElementsByClassName('total-price')[0];
+  total = 0;
+  valor.innerHTML = '';
+});
+
 const valorTotal = (parametro) => {
   const valor = document.getElementsByClassName('total-price')[0];
   valor.innerHTML = '';
