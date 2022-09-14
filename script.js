@@ -8,13 +8,25 @@
  * @param {string} imageSource - URL da imagem.
  * @returns {Element} Elemento de imagem do produto.
  */
-
 let save = [];
+let total = 0;
+const sumPrice = (valor) => {
+  total += valor;
+};
+const subPrice = (valor) => {
+  total -= valor;
+};
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
   img.src = imageSource;
   return img;
+};
+
+const valorTotal = (parametro) => {
+  const valor = document.getElementsByClassName('total-price')[0];
+  valor.innerHTML = '';
+  valor.innerHTML = `Total ${parametro}`;
 };
 /**
  * Função responsável por criar e retornar qualquer elemento.
@@ -46,11 +58,14 @@ const createCustomElement = (element, className, innerText) => {
  */
 /*  const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
  */
-const cartItemClickListener = (element) => {
+const cartItemClickListener = async (element) => {
   const ol = document.getElementsByClassName('cart__items')[0]; 
+  const { price } = await fetchItem(element.target.id);
+  subPrice(price);
   ol.removeChild(element.target);
   save = ol.innerHTML;
   saveCartItems(save);
+  valorTotal(total);
 };
 
 const appendLi = (elemento) => {
@@ -70,16 +85,19 @@ const appendLi = (elemento) => {
   return appendLi(li);
 };
 
-const createProductItemElement = ({ id, title, thumbnail }) => {
+const createProductItemElement = ({ id, title, thumbnail, price }) => {
   const section = document.createElement('section');
   section.className = 'item';
   section.appendChild(createCustomElement('span', 'item_id', id));
   section.appendChild(createCustomElement('span', 'item__title', title));
+  section.appendChild(createCustomElement('span', 'item__title_price', price));
   section.appendChild(createProductImageElement(thumbnail));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   const btn = section.lastChild;
   btn.addEventListener('click', async () => {
   createCartItemElement(await fetchItem(id)); 
+  sumPrice(price);
+  valorTotal(total);
 }); 
 
   return section;
