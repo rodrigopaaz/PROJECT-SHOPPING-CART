@@ -8,6 +8,8 @@
  * @param {string} imageSource - URL da imagem.
  * @returns {Element} Elemento de imagem do produto.
  */
+
+let save = [];
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -37,18 +39,34 @@ const createCustomElement = (element, className, innerText) => {
  * @returns {Element} Elemento de produto.
  */
 
-const cartItemClickListener = () => '';
+/**
+ * Função que recupera o ID do produto passado como parâmetro.
+ * @param {Element} product - Elemento do produto.
+ * @returns {string} ID do produto.
+ */
+ const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
+
+const cartItemClickListener = (element) => {
+  const ol = document.getElementsByClassName('cart__items')[0]; 
+  ol.removeChild(element.target);
+  save = ol.innerHTML;
+  getSavedCartItems(save);
+};
 
 const appendLi = (elemento) => {
   const ol = document.getElementsByClassName('cart__items')[0]; 
   ol.appendChild(elemento);
+  save = ol.innerHTML;
+  getSavedCartItems(save);
 };
 
  const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
+  li.id = id;
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  const ol = document.getElementsByClassName('cart__items')[0]; 
+  ol.addEventListener('click', cartItemClickListener);
   return appendLi(li);
 };
 
@@ -60,17 +78,12 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
   section.appendChild(createProductImageElement(thumbnail));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
   const btn = section.lastChild;
-  btn.addEventListener('click', async () => { createCartItemElement(await fetchItem(id)); }); 
+  btn.addEventListener('click', async () => {
+  createCartItemElement(await fetchItem(id)); 
+}); 
 
   return section;
 };
-
-/**
- * Função que recupera o ID do produto passado como parâmetro.
- * @param {Element} product - Elemento do produto.
- * @returns {string} ID do produto.
- */
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 
 /* const itemAdd = document.getElementsByClassName('item__add'); 
 const ulItem = document.getElementsByClassName('items');
@@ -92,6 +105,17 @@ const newClass = (parametro) => {
   return classItems.appendChild(createProductItemElement(parametro));
 };
 
+const loadCart = async () => {
+  const reloadCart = localStorage.cartItems;
+  localStorage.setItem('cartItems', reloadCart);
+  const ol = document.getElementsByClassName('cart__items')[0]; 
+  if (localStorage.cartItems !== 'undefined' && localStorage.cartItems.length !== 0) {
+  ol.innerHTML = JSON.parse(reloadCart);
+  save = JSON.parse(reloadCart);
+  ol.addEventListener('click', cartItemClickListener); 
+}
+  };
+
 const createProduct = async () => {
   const { results } = await fetchProducts('computador');
     results.forEach((element) => {
@@ -99,4 +123,4 @@ const createProduct = async () => {
     });
 };
 
-window.onload = () => { createProduct(); };
+window.onload = () => { createProduct(); loadCart(); };
