@@ -113,12 +113,6 @@ const createProductItemElement = ({ id, title, thumbnail, price }) => {
   return section;
 };
 
-/* const itemAdd = document.getElementsByClassName('item__add'); 
-const ulItem = document.getElementsByClassName('items');
-ulItem[0].addEventListener('click', (object) => {
-console.log(object.target.innerText);
-}); */
-
 /**
  * Função responsável por criar e retornar um item do carrinho.
  * @param {Object} product - Objeto do produto.
@@ -130,7 +124,14 @@ console.log(object.target.innerText);
 
 const newClass = (parametro) => {
   const classItems = document.getElementsByClassName('items')[0];
-  return classItems.appendChild(createProductItemElement(parametro));
+  const span = document.createElement('span');
+  span.innerHTML = 'loading...';
+  span.className = 'loading';
+  classItems.appendChild(span);
+  return setTimeout(() => { 
+    classItems.removeChild(span);
+    classItems.appendChild(createProductItemElement(parametro)); 
+}, '3000');
 };
 
 const loadCart = async () => {
