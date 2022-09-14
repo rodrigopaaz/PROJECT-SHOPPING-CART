@@ -5,6 +5,16 @@ const { expect } = require('@jest/globals');
 localStorageSimulator('setItem');
 
 describe('3 - Teste a função saveCartItems', () => {
-  // implemente seus testes aqui
-  fail('Teste vazio');
+  it('Testa se localStorage.setItem é chamado:  ', () => {
+    saveCartItems('teste');
+    expect(localStorage.setItem).toBeCalledTimes(1);
+  })
+  it('Testa se localStorage.setItem é chamado com a chave e o Valor: ', () => {
+    saveCartItems('id', 'teste');
+    expect(localStorage.setItem).toBeCalledTimes(1);
+  })
+/*   it('Testa se getItem é chamado ', () => {
+    saveCartItems();
+    expect(localStorage.getItem).toBeCalledTimes(1);
+  }) */
 });

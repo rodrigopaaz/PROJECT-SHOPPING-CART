@@ -44,20 +44,20 @@ const createCustomElement = (element, className, innerText) => {
  * @param {Element} product - Elemento do produto.
  * @returns {string} ID do produto.
  */
- const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
-
+/*  const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
+ */
 const cartItemClickListener = (element) => {
   const ol = document.getElementsByClassName('cart__items')[0]; 
   ol.removeChild(element.target);
   save = ol.innerHTML;
-  getSavedCartItems(save);
+  saveCartItems(save);
 };
 
 const appendLi = (elemento) => {
   const ol = document.getElementsByClassName('cart__items')[0]; 
   ol.appendChild(elemento);
   save = ol.innerHTML;
-  getSavedCartItems(save);
+  saveCartItems(save);
 };
 
  const createCartItemElement = ({ id, title, price }) => {
@@ -106,7 +106,7 @@ const newClass = (parametro) => {
 };
 
 const loadCart = async () => {
-  const reloadCart = localStorage.cartItems;
+  const reloadCart = JSON.parse(getSavedCartItems('cartItems'));
   localStorage.setItem('cartItems', reloadCart);
   const ol = document.getElementsByClassName('cart__items')[0]; 
   if (localStorage.cartItems !== 'undefined' && localStorage.cartItems.length !== 0) {
