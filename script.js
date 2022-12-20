@@ -23,20 +23,10 @@ const createProductImageElement = (imageSource) => {
   return img;
 };
 
-const button = document.getElementsByClassName('empty-cart')[0];
-button.addEventListener('click', () => {
-  const ol = document.getElementsByClassName('cart__items')[0]; 
-  ol.innerHTML = '';
-  localStorage.clear();
-  const valor = document.getElementsByClassName('total-price')[0];
-  total = 0;
-  valor.innerHTML = '';
-});
-
 const valorTotal = (parametro) => {
   const valor = document.getElementsByClassName('total-price')[0];
   valor.innerHTML = '';
-  valor.innerHTML = `Total ${parametro}`;
+  valor.innerHTML = `Subtotal ${parametro.toFixed(2)}`;
 };
 /**
  * Função responsável por criar e retornar qualquer elemento.
@@ -70,12 +60,24 @@ const createCustomElement = (element, className, innerText) => {
  */
 const cartItemClickListener = async (element) => {
   const ol = document.getElementsByClassName('cart__items')[0]; 
-  const { price } = await fetchItem(element.target.id);
+  const li = document.getElementsByClassName('cart__item'); 
+  const remove = element.target.getAttribute('data_evento');
+  const { price } = await fetchItem(li[remove].id);
+  ol.removeChild(li[remove]);
   subPrice(price);
-  ol.removeChild(element.target);
   save = ol.innerHTML;
   saveCartItems(save);
   valorTotal(total);
+};
+
+const createProductImageElement2 = (imageSource) => {
+  const img = document.createElement('img');
+  const li = document.getElementsByClassName('cart__item'); 
+  img.className = 'item__image1';
+  img.src = imageSource;
+  img.setAttribute('data_evento', li.length);
+  img.addEventListener('click', cartItemClickListener);
+  return img;
 };
 
 const appendLi = (elemento) => {
@@ -85,12 +87,23 @@ const appendLi = (elemento) => {
   saveCartItems(save);
 };
 
- const createCartItemElement = ({ id, title, price }) => {
+ const createCartItemElement = ({ id, title, price, thumbnail }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.id = id;
-  li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
+  const div = document.createElement('div');
+  div.className = 'div__cart';
+  li.appendChild(createProductImageElement(thumbnail));
+  li.appendChild(div);
+  div.appendChild(createCustomElement('span', 'title_cart', title));
+  const cifrao = document.createElement('span');
+  cifrao.className = 'cifrao';
+  div.appendChild(cifrao);
+  cifrao.innerText = 'R$';
+  cifrao.appendChild(createCustomElement('span', 'item__title_price', price.toFixed(2)));
+  li.appendChild(createProductImageElement2('deletar.png'));
   const ol = document.getElementsByClassName('cart__items')[0]; 
+  ol.appendChild(li);
   ol.addEventListener('click', cartItemClickListener);
   return appendLi(li);
 };
@@ -98,11 +111,15 @@ const appendLi = (elemento) => {
 const createProductItemElement = ({ id, title, thumbnail, price }) => {
   const section = document.createElement('section');
   section.className = 'item';
-  section.appendChild(createCustomElement('span', 'item_id', id));
-  section.appendChild(createCustomElement('span', 'item__title', title));
-  section.appendChild(createCustomElement('span', 'item__title_price', price));
+  const valorEmReal = `${price.toFixed(2)}`;
   section.appendChild(createProductImageElement(thumbnail));
-  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
+  section.appendChild(createCustomElement('span', 'item__title', title));
+  const cifrao = document.createElement('span');
+  cifrao.className = 'cifrao';
+  section.appendChild(cifrao);
+  cifrao.innerHTML = 'R$';
+  cifrao.appendChild(createCustomElement('span', 'item__title_price', valorEmReal));
+  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho'));
   const btn = section.lastChild;
   btn.addEventListener('click', async () => {
   createCartItemElement(await fetchItem(id)); 
@@ -145,11 +162,36 @@ const loadCart = async () => {
 }
   };
 
-const createProduct = async () => {
+const createProduct = async (filtro) => {
+  if (filtro === '') {
   const { results } = await fetchProducts('computador');
     results.forEach((element) => {
       newClass(element);
-    });
+    }); 
+  } else {
+    const { results } = await fetchProducts(filtro);
+    results.forEach((element) => {
+      newClass(element);
+    });     
+  }
 };
+const filtrar = document.getElementsByClassName('container-title')[0];
+filtrar.appendChild(createCustomElement('input', 'filter'));
+const filter = document.getElementsByClassName('filter')[0];
+const items = document.getElementsByClassName('items')[0];
+filter.addEventListener('click', () => {
+  items.innerHTML = ''; 
+  createProduct(filter.value);
+});
+const button = document.getElementsByClassName('empty-cart')[0];
+button.addEventListener('click', () => {
+  const ol = document.getElementsByClassName('cart__items')[0]; 
+  ol.innerHTML = '';
+  localStorage.clear();
+  const valor = document.getElementsByClassName('total-price')[0];
+  total = 0;
+  valor.innerHTML = '';
+  valorTotal(0); 
+});
 
-window.onload = () => { createProduct(); loadCart(); };
+window.onload = () => { createProduct(); loadCart(); valorTotal(0); };
