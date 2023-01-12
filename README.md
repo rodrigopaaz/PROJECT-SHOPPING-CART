@@ -8,7 +8,7 @@ Neste projeto foi utilizado uma Api do mercado livre para desenvolver um carrinh
 
 - Trabalhar com funções síncronas e assíncronas.
 
-- Trabalhar com componentes de classa do React.
+- Trabalhar com componentes de classe do React.
 
 - Utilizar o protótipo do Figma como referência para estilização.
 
